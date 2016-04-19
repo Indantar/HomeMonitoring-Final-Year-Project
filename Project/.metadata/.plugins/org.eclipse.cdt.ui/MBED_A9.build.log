@@ -1,0 +1,5 @@
+17:43:59 **** Clean-only build of configuration Debug for project MBED_A9 ****
+rm -rf MBED_A9.siz MBED_A9.elf main.o main.d env/test_env.d env/test_env.o ${BuildArtifactFileBaseName}.bin 
+
+17:43:59 Build Finished (took 180ms)
+

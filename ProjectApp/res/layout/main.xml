@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg2"
+                android:id="@+id/main"
+                android:clickable="true">
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Username:"
+            android:id="@+id/textViewUser" android:layout_alignParentTop="true" android:layout_alignParentStart="true"
+            android:width="300dp" android:textSize="30dp" android:textColor="#840000fa"
+            android:textIsSelectable="true"/>
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Login"
+            android:id="@+id/btnRoom1"
+            android:width="200dp" android:background="#A0FFFFFF"
+            android:onClick="Login"
+            android:layout_centerVertical="true" android:layout_centerHorizontal="true"/>
+    <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/editTextUser" android:layout_alignParentStart="true"
+            android:layout_alignEnd="@+id/textViewUser" android:textSize="30dp" android:textColor="#a0090400"
+            android:editable="true" android:layout_below="@+id/textViewUser" android:background="#a900fff6"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Password"
+            android:id="@+id/textViewPass"
+            android:layout_alignParentStart="true" android:layout_below="@+id/editTextUser"
+            android:layout_alignEnd="@+id/editTextUser" android:width="300dp" android:textSize="30dp"
+            android:textColor="#840000fa"/>
+    <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:ems="10"
+            android:id="@+id/editTextPass" android:layout_below="@+id/textViewPass" android:layout_alignParentStart="true"
+            android:layout_alignEnd="@+id/textViewPass" android:textSize="30dp" android:textIsSelectable="false"
+            android:textColor="#a0090400" android:editable="true" android:background="#a900fff6"/>
+</RelativeLayout>

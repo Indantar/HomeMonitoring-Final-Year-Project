@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;TCPEchoClient/mainWithThreads&apos; to &apos;mainWithThreads.cpp&apos;" description="Rename resource &apos;mainWithThreads&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="mainWithThreads" name="mainWithThreads.cpp" stamp="1461104024662" updateReferences="true"/>
+</session>

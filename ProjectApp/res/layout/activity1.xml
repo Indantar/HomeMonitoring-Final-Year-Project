@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg2"
+                android:id="@+id/ControlRoom"
+                android:clickable="true">
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lights"
+            android:id="@+id/textView3" android:layout_alignParentStart="true"
+            android:layout_marginTop="50dp" android:textColor="#840000fa" android:width="130dp" android:textSize="30dp"/>
+    <ToggleButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lights"
+            android:id="@+id/toggleButton"
+            android:checked="false" android:width="175dp"
+            android:background="#a900fff6"
+            android:layout_above="@+id/textView4" android:layout_alignParentEnd="true"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Temperature"
+            android:id="@+id/textView4" android:layout_below="@+id/textView3" android:layout_alignParentStart="true"
+            android:layout_marginTop="50dp" android:width="145dp" android:textSize="25dp" android:textColor="#840000fa"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView5"
+            android:width="130dp"
+            android:textSize="25dp" android:layout_alignTop="@+id/textView4" android:layout_alignParentEnd="true"
+            android:textColor="#840000fa"/>
+    <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Log Out"
+            android:id="@+id/btnMainMenu" android:layout_alignParentBottom="true" android:layout_alignParentStart="true"
+            android:width="170dp" android:textSize="25dp"
+            android:onClick="goToMain"
+            android:background="#a900fff6"/>
+</RelativeLayout>

@@ -1,0 +1,7 @@
+16:29:30 **** Rebuild of configuration Debug for project DebounceIn ****
+Info: Internal Builder is used for build
+arm-none-eabi-size --format=berkeley DebounceIn.elf 
+arm-none-eabi-size: 'DebounceIn.elf': No such file
+
+16:29:34 Build Finished (took 4s.99ms)
+
