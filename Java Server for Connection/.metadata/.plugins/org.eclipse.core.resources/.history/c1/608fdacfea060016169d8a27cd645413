@@ -1,0 +1,89 @@
+package Server;
+
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class Server extends Thread 
+{
+
+    final private ServerSocket servSoc;
+    final public static int NUMOFCLIENTS = 3000;
+    final private SubServer[] clientsCOnnected = new SubServer[ NUMOFCLIENTS ];
+
+    public Server( int port ) throws IOException 
+    {
+         this.servSoc = new servSoc( port );
+         start();
+    }
+
+    @Override
+    public void run() 
+    {
+        while ( !this.interrupted() ) 
+        {
+             //wait for clients
+             Socket connection = thisservSoc.accept();
+             assignConnectionToSubServer( connection );
+        }
+    }
+
+    public void assignConnectionToSubServer( Socket connection ) 
+    {
+         for ( int i = 0 ; i < NUMOFCLIENTS ; i++ ) 
+         {
+
+             //find an unassigned subserver (waiter)
+             if ( this.clientsCOnnected[ i ] == null ) 
+             {
+                  this.clientsCOnnected[ i ] = new SubServer( connection , i );
+                  break;
+             }
+         }
+    }
+
+    protected class SubServer extends Thread 
+    {
+
+        final private int clientID;
+        final private Socket clientSocket;
+
+        //you can store additional client properties here if you want, for example:
+        private int m_gameRating = 1500;
+
+        public SubServer( Socket connection , int id ) 
+        {
+            this.clientID = id;
+            this.clientSocket = connection;
+            start();
+        }
+
+        @Override
+        public void run() 
+        {
+             while( !this.interrupted() ) 
+             {
+                 //process a client request
+                 //this is for you to implement
+             }
+        }
+
+        //as an example, if you read String messages from your client,
+        //just call this method from the run() method to process the client request
+        public void process( String message ) 
+        {
+
+        }
+
+        /**
+         * terminates the connection with this client (i.e. stops serving him)
+         */
+        public void close()
+        {
+            try {
+                 this.clientSocket.close();
+            } catch ( IOException e ) {
+                 //ignore
+            }
+        }
+    }
+}

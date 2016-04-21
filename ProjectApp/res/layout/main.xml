@@ -10,16 +10,17 @@
             android:layout_height="wrap_content"
             android:text="Username:"
             android:id="@+id/textViewUser" android:layout_alignParentTop="true" android:layout_alignParentStart="true"
-            android:width="300dp" android:textSize="30dp" android:textColor="#840000fa"
+            android:width="300dp" android:textSize="30dp" android:textColor="#76fa00"
             android:textIsSelectable="true"/>
     <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Login"
             android:id="@+id/btnRoom1"
-            android:width="200dp" android:background="#A0FFFFFF"
+            android:width="200dp" android:background="#a900fff6"
             android:onClick="Login"
-            android:layout_centerVertical="true" android:layout_centerHorizontal="true"/>
+            android:layout_below="@+id/editTextPass" android:layout_alignEnd="@+id/editTextPass"
+            android:layout_marginTop="39dp"/>
     <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -33,7 +34,7 @@
             android:id="@+id/textViewPass"
             android:layout_alignParentStart="true" android:layout_below="@+id/editTextUser"
             android:layout_alignEnd="@+id/editTextUser" android:width="300dp" android:textSize="30dp"
-            android:textColor="#840000fa"/>
+            android:textColor="#76fa00"/>
     <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

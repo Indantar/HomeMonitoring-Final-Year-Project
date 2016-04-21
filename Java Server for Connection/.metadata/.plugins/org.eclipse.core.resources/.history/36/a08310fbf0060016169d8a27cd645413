@@ -1,0 +1,131 @@
+package Server;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class Server extends Thread 
+{
+
+    final private ServerSocket servSoc;
+    final public static int NUMOFCLIENTS = 3000;
+    final private SubServer[] clientsCOnnected = new SubServer[ NUMOFCLIENTS ];
+    private static BufferedReader br;
+    private String msg;
+
+    public Server( int port ) throws IOException 
+    {
+         this.servSoc = new ServerSocket( port );
+         start();
+    }
+
+    @Override
+    public void run() 
+    {
+        while ( !this.interrupted() ) 
+        {
+             //wait for clients
+			try 
+			{
+	             Socket connection = this.servSoc.accept();
+	             assignConnectionToSubServer( connection );
+			} 
+			catch (IOException e) 
+			{
+				 System.out.println(e);
+			}
+        }
+    }
+
+    public void assignConnectionToSubServer( Socket connection ) 
+    {
+         for ( int i = 0 ; i < NUMOFCLIENTS ; i++ ) 
+         {
+
+             //find an unassigned subserver (waiter)
+             if ( this.clientsCOnnected[ i ] == null ) 
+             {
+                  this.clientsCOnnected[ i ] = new SubServer( connection , i );
+                  break;
+             }
+         }
+    }
+
+    protected class SubServer extends Thread 
+    {
+
+        final private int clientID;
+        final private Socket clientSocket;
+
+        public SubServer( Socket connection , int id ) 
+        {
+            this.clientID = id;
+            this.clientSocket = connection;
+            start();
+        }
+
+        @Override
+        public void run() 
+        {
+        	try
+        	{
+	           	 System.out.println("Accepted Client : Address - "+ clientSocket.getInetAddress().getHostName());
+	           	 br = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+	             while( !this.interrupted()) 
+	             {
+	            	 int i = 0;
+	            	 //Get Message
+	            	 while((msg = br.readLine()) != null){
+	            		 process(msg);
+	            	 }
+	             }
+        	}
+			 catch(IOException e){
+				 System.out.println(e);
+			 }
+        }
+
+        //as an example, if you read String messages from your client,
+        //just call this method from the run() method to process the client request
+        public void process( String message ) 
+        {
+        	OutputStreamWriter osw;
+        	if(message.equals("board"))
+        	{
+        		try{
+            		osw = new OutputStreamWriter(clientSocket.getOutputStream(),"UTF-8");
+        		}
+        		catch(IOException e){
+        			System.out.println(e);
+        		}
+        	}
+        	else if(message.equals("phone"))
+        	{
+        		try{
+            		osw = new OutputStreamWriter(clientSocket.getOutputStream(),"UTF-8");
+        		}
+        		catch(IOException e){
+        			System.out.println(e);
+        		}
+        	}
+        	else{
+        		osw.write("Message Recieved");
+        	}
+        }
+
+        /**
+         * terminates the connection with this client (i.e. stops serving him)
+         */
+        public void close()
+        {
+            try {
+                 this.clientSocket.close();
+            } catch ( IOException e ) {
+                 //ignore
+            }
+        }
+    }
+}

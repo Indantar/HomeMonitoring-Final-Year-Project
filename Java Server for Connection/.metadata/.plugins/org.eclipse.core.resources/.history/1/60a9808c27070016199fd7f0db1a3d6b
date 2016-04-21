@@ -1,0 +1,64 @@
+package Server;
+
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.IOException;
+import java.util.Random;
+
+public class serverToPhone implements Runnable
+{
+	private static ServerSocket serverSocket;
+	private static Socket clientSocket;
+	private static BufferedReader br;
+	private static OutputStreamWriter osw;
+	private static String msg;
+	
+	serverToPhone(Socket sSocket){
+		clientSocket = sSocket;
+	}
+	public static void main(String[] args) throws IOException
+	{
+		// Wait for client to connect on 80
+		serverSocket = new ServerSocket(80);
+		try
+		{
+			while(true)
+			{
+				InetAddress ip;
+				ip = InetAddress.getLocalHost();
+				System.out.println("Waiting for connection on: " + ip.getHostAddress());
+				Socket sock = serverSocket.accept();
+				new Thread(new serverToPhone(sock)).start();
+			}
+		}
+		catch(IOException e)
+		{
+			System.out.println(e);
+		}
+	}
+
+	public void run() 
+	{
+		Random rand = new Random();
+		try
+		{
+			System.out.println("Accepted Client : Address - "+ clientSocket.getInetAddress().getHostName());
+			// Create a reader
+			br = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+			osw = new OutputStreamWriter(clientSocket.getOutputStream(),"UTF-8");
+			while(true)
+			{
+				msg = String.valueOf(rand.nextInt(40)) + "\n";
+				osw.write(msg,0,msg.length());
+			}
+		}
+		catch(IOException e)
+		{
+			System.out.println(e);
+		}	
+	}
+}

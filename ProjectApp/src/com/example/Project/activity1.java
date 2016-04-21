@@ -2,10 +2,16 @@ package com.example.Project;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.*;
 
+import java.io.*;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketAddress;
 import java.util.Random;
 
 /**
@@ -15,16 +21,20 @@ public class activity1 extends Activity {
 
     ToggleButton togBtn;
     Button btnMainMenu;
+    Button updateButton;
     TextView txt2;
     TextView txt3;
     TextView txt4;
+    String SERVER_ADDRESS = "192.168.0.4";
+    int SERVER_PORT = 80;
+    public String newTemp = "0";
+    ConnectClient cc;
 
     Thread t = new Thread()
     {
         @Override
         public void run()
         {
-            Random rand = new Random();
             try
             {
                 while (!isInterrupted())
@@ -35,14 +45,38 @@ public class activity1 extends Activity {
                         @Override
                         public void run()
                         {
-                            txt4.setText(String.valueOf(rand.nextInt(40)));
+                            txt4.setText(newTemp);
                         }
                     });
                 }
             }
-            catch (InterruptedException e)
+            catch (Exception e)
             {
-
+                System.out.println(e);
+            }
+        }
+    };
+    Thread upTemp = new Thread(){
+        @Override
+        public void run()
+        {
+            try
+            {
+                while(!isInterrupted())
+                {
+                    Thread.sleep(1000);
+                    runOnUiThread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            newTemp = cc.getMessage();
+                        }
+                    });
+                }
+            }
+            catch(Exception e){
+                System.out.println(e);
             }
         }
     };
@@ -57,6 +91,7 @@ public class activity1 extends Activity {
             txt4 = (TextView) findViewById(R.id.textView5);
             togBtn = (ToggleButton) findViewById(R.id.toggleButton);
             btnMainMenu = (Button) findViewById(R.id.btnMainMenu);
+            updateButton = (Button) findViewById(R.id.updateButton);
             t.start();
         }
         catch(Exception e){
@@ -66,5 +101,10 @@ public class activity1 extends Activity {
     public void goToMain(View v)
     {
         finish();
+    }
+    public void update(View v){
+        cc = new ConnectClient("Updating",SERVER_ADDRESS,SERVER_PORT,getApplicationContext());
+        cc.execute();
+        upTemp.start();
     }
 }

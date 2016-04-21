@@ -1,0 +1,144 @@
+package Server;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class Server extends Thread 
+{
+
+    final private ServerSocket serverSocket;
+    final public static int CLIENTS = 2;
+    final private SubServer[] clietnsConnected = new SubServer[ CLIENTS ];
+	private static String msg;
+	private static String msgSend;
+
+    public Server( int port ) throws IOException {
+         this.serverSocket = new ServerSocket( port );
+         start();
+    }
+
+    @Override
+    public void run()
+    {
+        while ( !this.interrupted() ) 
+        {
+	         //wait for clients
+			try 
+			{
+		        Socket connection;
+				InetAddress ip;
+				ip = InetAddress.getLocalHost();
+		        System.out.println("Waiting for two clients at: " + ip.getHostAddress());
+	            for ( int i = 0 ; i < CLIENTS ; i++ ) 
+	            {
+	                //find an unassigned subserver (waiter)
+	                if ( this.clietnsConnected[ i ] == null ) {
+	                     this.clietnsConnected[ i ] = new SubServer( serverSocket.accept() , i );
+	                     break;
+	                }
+	            }
+			} 
+			catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }
+    }
+//    public void assignConnectionToSubServer( Socket connection ) {
+//         for ( int i = 0 ; i < CLIENTS ; i++ ) {
+//
+//             //find an unassigned subserver (waiter)
+//             if ( this.clietnsConnected[ i ] == null ) {
+//                  this.clietnsConnected[ i ] = new SubServer( connection , i );
+//                  break;
+//             }
+//         }
+//    }
+    protected class SubServer extends Thread 
+    {
+
+        final private int clientID;
+        final private Socket clientSocket;
+        
+        public SubServer( Socket connection , int id ) {
+            this.clientID = id;
+            this.clientSocket = connection;
+            start();
+        }
+
+        @Override
+        public void run() 
+        {
+             while( !this.interrupted()) 
+             {
+            	System.out.println("Accepted Client : Address - "+ clientSocket.getInetAddress().getHostName());
+    			while(true)
+    			{
+    				try
+    				{
+        				if(clientID == 0 && clietnsConnected[1].returnClient().isConnected())
+        				{
+        	     			BufferedReader br = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        	    			OutputStreamWriter osw = new OutputStreamWriter(clietnsConnected[1].returnClient().getOutputStream(),"UTF-8");
+        					// Get the client message
+        					msg = br.readLine();
+        					if(!msg.equals("Closing"))
+        					{
+        						msgSend = msg;
+        						System.out.println("Sending Message: " + msgSend);
+        						osw.write(msgSend,0,msgSend.length());
+        						osw.flush();
+        					}
+        					else
+        					{
+        						clientSocket.close();
+        					}
+        					Thread.sleep(1000);
+        				}
+        				else if(clientID == 1 && clietnsConnected[0].returnClient().isConnected())
+        				{
+        	     			BufferedReader br = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        	    			OutputStreamWriter osw = new OutputStreamWriter(clietnsConnected[0].returnClient().getOutputStream(),"UTF-8");
+        					// Get the client message
+        					msg = br.readLine();
+        					if(!msg.equals("Closing"))
+        					{
+        						msgSend = msg+"\n";
+        						System.out.println("Sending Message: " + msgSend);
+        						osw.write(msgSend,0,msgSend.length());
+        						osw.flush();
+        					}
+        					else
+        					{
+        						clientSocket.close();
+        					}
+        					Thread.sleep(1000);
+        				}
+    				}
+    				catch(Exception e)
+    				{
+    					e.printStackTrace();
+    				}
+    			}
+             }
+        }
+        public Socket returnClient(){
+			return clientSocket;
+        }
+        /**
+         * terminates the connection with this client (i.e. stops serving him)
+         */
+        public void close() {
+            try {
+                 this.clientSocket.close();
+            } catch ( IOException e ) {
+                 //ignore
+            }
+        }
+    }
+}
