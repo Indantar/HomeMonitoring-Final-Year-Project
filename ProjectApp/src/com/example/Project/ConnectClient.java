@@ -27,6 +27,7 @@ public class ConnectClient extends AsyncTask<String, Void, String> {
     private static InputStreamReader inputStreamReader;
     private static BufferedReader bufferedReader;
     private static String message;
+    private static String sendMessage;
 
     public ConnectClient(String par, String ip, Integer prt, Context ctx){
         super();
@@ -55,15 +56,20 @@ public class ConnectClient extends AsyncTask<String, Void, String> {
             Log.d("Debug Original Values","Getting output stream");
             bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             printWriter = new PrintWriter(socket.getOutputStream(), true);
-            printWriter.write("Send me data\n");
-            printWriter.flush();
             while(true)
             {
                 message = bufferedReader.readLine();
-                if(!message.equals("stop")){
-                    printWriter.write("Message Recieved\n");
+                Log.d("Debug","Message Received" + message);
+                if(!message.equals("stop"))
+                {
+                    boolean LEDSTATE = activity1.getState();
+                    if(LEDSTATE == true)
+                        sendMessage = "on";
+                    else
+                        sendMessage = "off";
+                    printWriter.write(sendMessage+"\n");
                     printWriter.flush();
-                    Log.d("Debug","Message Recieved" + message);
+                    Log.d("Debug","Sending Message:" + sendMessage);
                 }
                 else
                 {

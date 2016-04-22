@@ -6,7 +6,7 @@
 AnalogIn T1(PTB2); //  temperature  sensor T1 on A0
 //DeboucnceIn pb(SW2);
 DigitalIn pb(SW2);
-DigitalOut led(LED_GREEN);
+DigitalOut led(LED2);
 float T; // average temperature
 float K = 3.3*100;
 //const char* ECHO_SERVER_ADDRESS = "192.168.1.1";
@@ -46,7 +46,8 @@ void sendThread(void const *args)
 			pc.printf("Bytes Sent: %d\r\n",num);
 			char buf[256];
 			int n = socket.receive(buf, 256);
-			if(n == -1){
+			if(n == -1)
+			{
 				pc.printf("Message not received\r\n");
 			}
 			else
@@ -54,10 +55,23 @@ void sendThread(void const *args)
 				pc.printf("Bytes received = %d\r\n",n);
 				buf[n] = '\0';
 				pc.printf("Received message from server: '%s'\r\n", buf);
+				if(strcmp(buf,"on"))
+					led.write(1);
+				else
+					led.write(0);
 			}
 		}
-		Thread::wait(1000);
+		Thread::wait(5000);
     }
+}
+void checkThread(void const *args){
+	while(true)
+	{
+		while(pb){}
+		pc.printf("Led State is: %d\r\n",led);
+		led = !led;
+		wait(0.5);
+	}
 }
 int main()
 {
@@ -71,6 +85,7 @@ int main()
     }
     pc.printf("Connected to Server at %s\r\n",ECHO_SERVER_ADDRESS);
 	Thread senThread(sendThread);
+	Thread ckThread(checkThread);
+
 	while(true);
 }
-

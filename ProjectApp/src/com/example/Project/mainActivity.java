@@ -52,11 +52,15 @@ public class mainActivity extends Activity {
             res = db.ReturnUserName(user,pass);
             if(res == 1)
             {
+                UserName.setText("");
+                Password.setText("");
                 Intent i = new Intent(mainActivity.this, activity1.class);
                 startActivity(i);
             }
             else
             {
+                UserName.setText("");
+                Password.setText("");
                 Toast.makeText(getBaseContext(), "The Username and Password combination is not valid, try again",
                         Toast.LENGTH_LONG).show();
             }

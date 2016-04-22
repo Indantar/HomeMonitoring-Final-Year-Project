@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:text="Login"
             android:id="@+id/btnRoom1"
-            android:width="200dp" android:background="#a900fff6"
+            android:width="200dp" android:background="#a100fff6"
             android:onClick="Login"
             android:layout_below="@+id/editTextPass" android:layout_alignEnd="@+id/editTextPass"
             android:layout_marginTop="39dp"/>
@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/editTextUser" android:layout_alignParentStart="true"
             android:layout_alignEnd="@+id/textViewUser" android:textSize="30dp" android:textColor="#a0090400"
-            android:editable="true" android:layout_below="@+id/textViewUser" android:background="#a900fff6"/>
+            android:editable="true" android:layout_below="@+id/textViewUser" android:background="#a100fff6"/>
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -42,5 +42,5 @@
             android:ems="10"
             android:id="@+id/editTextPass" android:layout_below="@+id/textViewPass" android:layout_alignParentStart="true"
             android:layout_alignEnd="@+id/textViewPass" android:textSize="30dp" android:textIsSelectable="false"
-            android:textColor="#a0090400" android:editable="true" android:background="#a900fff6"/>
+            android:textColor="#a0090400" android:editable="true" android:background="#a100fff6"/>
 </RelativeLayout>

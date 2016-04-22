@@ -21,42 +21,45 @@ public class activity1 extends Activity {
 
     ToggleButton togBtn;
     Button btnMainMenu;
-    Button updateButton;
     TextView txt2;
     TextView txt3;
     TextView txt4;
-    String SERVER_ADDRESS = "192.168.0.4";
+    String SERVER_ADDRESS = "192.168.0.3";
     int SERVER_PORT = 80;
     public String newTemp = "0";
+    public static boolean ledState = false;
+    public String ls = "off";
+    public String[] data;
     ConnectClient cc;
 
-    Thread t = new Thread()
+//    Thread t = new Thread()
+//    {
+//        @Override
+//        public void run()
+//        {
+//            try
+//            {
+//                while (!isInterrupted())
+//                {
+//                    Thread.sleep(1000);
+//                    runOnUiThread(new Runnable()
+//                    {
+//                        @Override
+//                        public void run()
+//                        {
+//
+//                        }
+//                    });
+//                }
+//            }
+//            catch (Exception e)
+//            {
+//                System.out.println(e);
+//            }
+//        }
+//    };
+    Thread upTemp = new Thread()
     {
-        @Override
-        public void run()
-        {
-            try
-            {
-                while (!isInterrupted())
-                {
-                    Thread.sleep(1000);
-                    runOnUiThread(new Runnable()
-                    {
-                        @Override
-                        public void run()
-                        {
-                            txt4.setText(newTemp);
-                        }
-                    });
-                }
-            }
-            catch (Exception e)
-            {
-                System.out.println(e);
-            }
-        }
-    };
-    Thread upTemp = new Thread(){
         @Override
         public void run()
         {
@@ -64,24 +67,36 @@ public class activity1 extends Activity {
             {
                 while(!isInterrupted())
                 {
-                    Thread.sleep(1000);
+                    Thread.sleep(5000);
                     runOnUiThread(new Runnable()
                     {
                         @Override
                         public void run()
                         {
-                            newTemp = cc.getMessage();
+                            if(cc.getMessage() != null) {
+                                data = cc.getMessage().split(":");
+                                newTemp = data[0];
+                                ls = data[1];
+                                if (ls.equals("on"))
+                                    ledState = true;
+                                else
+                                    ledState = false;
+                                togBtn.setChecked(ledState);
+                                txt4.setText(newTemp);
+                            }
                         }
                     });
                 }
             }
-            catch(Exception e){
+            catch(Exception e)
+            {
                 System.out.println(e);
             }
         }
     };
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         try
         {
@@ -91,10 +106,13 @@ public class activity1 extends Activity {
             txt4 = (TextView) findViewById(R.id.textView5);
             togBtn = (ToggleButton) findViewById(R.id.toggleButton);
             btnMainMenu = (Button) findViewById(R.id.btnMainMenu);
-            updateButton = (Button) findViewById(R.id.updateButton);
-            t.start();
+            cc = new ConnectClient("Updating",SERVER_ADDRESS,SERVER_PORT,getApplicationContext());
+            cc.execute();
+            upTemp.start();
+            //t.start();
         }
-        catch(Exception e){
+        catch(Exception e)
+        {
             Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
@@ -102,9 +120,12 @@ public class activity1 extends Activity {
     {
         finish();
     }
-    public void update(View v){
-        cc = new ConnectClient("Updating",SERVER_ADDRESS,SERVER_PORT,getApplicationContext());
-        cc.execute();
-        upTemp.start();
+    public void changeLedState(View v)
+    {
+        togBtn.toggle();
+        ledState = !ledState;
+    }
+    public static boolean getState(){
+        return ledState;
     }
 }
