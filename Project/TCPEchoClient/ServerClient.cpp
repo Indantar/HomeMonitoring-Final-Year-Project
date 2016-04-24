@@ -8,7 +8,9 @@ AnalogIn T1(PTB2); //  temperature  sensor T1 on A0
 DigitalIn pb(SW2);
 DigitalOut led(LED2);
 float T; // average temperature
-float K = 3.3*100;
+float stepSize = 3.3/4096;
+bool ledState;
+const int TIME_OUT = 5000;
 
 TCPSocketServer server;
 TCPSocketConnection socket;
@@ -20,27 +22,35 @@ void checkThread(void const *args)
 	while(true)
 	{
 		while(pb){}
-		pc.printf("Led State is: %d\r\n",led.read());
-		led = !led;
-		wait(0.5);
+		ledState = !ledState;
+		Thread::wait(TIME_OUT/5);
+	}
+}
+void controlLed(void const *args)
+{
+	while(true)
+	{
+		led = !ledState;
+		Thread::wait(TIME_OUT);
 	}
 }
 void connectionThread(void const *args)
 {
-	int ledState;
-	char temp[10];
-	char state[10];
-    char message[10];
+	char temp[10] = {0};
+	char state[10] = {0};
+    char message[10] = {0};
+	char buf[256] = {0};
     while(socket.is_connected())
     {
     	memset(&message[0], 0, sizeof(message));
     	memset(&state[0], 0, sizeof(state));
     	memset(&temp[0], 0, sizeof(temp));
-		ledState = led;
-		T = T1*K;
+    	memset(&buf[0], 0, sizeof(buf));
+		pc.printf("Led State is: %d\r\n",led.read());
+		T = (T1/stepSize)/10;
 		pc.printf("Temperature (in Celsius) is %d \r\n",(int)T);
 		sprintf(temp,"%d",(int)T);
-		if(ledState == 1)
+		if(ledState == true)
 			strcat(state,"on");
 		else
 			strcat(state,"off");
@@ -54,7 +64,6 @@ void connectionThread(void const *args)
 		if(num != -1)
 		{
 			pc.printf("Bytes Sent: %d\r\n",num);
-			char buf[256];
 			int n = socket.receive(buf, 256);
 			if(n == -1)
 			{
@@ -65,14 +74,15 @@ void connectionThread(void const *args)
 				pc.printf("Bytes received = %d\r\n",n);
 				buf[n] = '\0';
 				pc.printf("Received message from Client: '%s'\r\n", buf);
-				if(strcmp(buf,"on"))
-					led.write(1);
+				if(!strcmp(buf,"on"))
+					ledState = true;
 				else
-					led.write(0);
+					ledState = false;
 			}
 		}
-		Thread::wait(5000);
+		Thread::wait(TIME_OUT);
     }
+    pc.printf("Client disconnected!!");
     socket.close();
 }
 int main (void)
@@ -86,7 +96,7 @@ int main (void)
 	pc.printf("Client at %s connected\r\n",socket.get_address());
 	Thread sockThread(connectionThread);
 	Thread ledThread(checkThread);
-	led.write(0);
+	Thread conThread(controlLed);
     while(true){}
 
 }
