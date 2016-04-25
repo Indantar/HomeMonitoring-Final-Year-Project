@@ -23,18 +23,20 @@ import java.util.Random;
  */
 public class activity1 extends Activity {
 
-    ToggleButton togBtn;
-    Button btnMainMenu;
-    TextView txt2;
-    TextView txt3;
-    TextView txt4;
-    String SERVER_ADDRESS = "192.168.0.3";
-    int SERVER_PORT = 80;
-    public String newTemp = "0";
+    private ToggleButton togBtn;
+    private Button showDataBtn;
+    private Button btnMainMenu;
+    private TextView txt2;
+    private TextView txt3;
+    private TextView txt4;
+    private String SERVER_ADDRESS = "192.168.0.3";
+    private FragmentTransaction fragt;
+    private int SERVER_PORT = 80;
+    public static String newTemp = "0";
     public static boolean ledState = false;
-    public String ls = "off";
-    public String[] data;
+    public static String ls = "off";
     public static final int TIME_OUT = 5000;
+    private fragmentViewData fvd;
     ConnectClient cc;
     DatabaseHelper dbh = new DatabaseHelper(this);
 
@@ -53,17 +55,12 @@ public class activity1 extends Activity {
                         @Override
                         public void run()
                         {
-                            if(cc.getMessage() != null) {
-                                data = cc.getMessage().split(":");
-                                newTemp = data[0];
-                                ls = data[1];
-                                if (ls.equals("on"))
-                                    ledState = true;
-                                else
-                                    ledState = false;
-                            }
                             dbh.enterData(ls,newTemp);
                             Log.d("Debug",ls+","+newTemp);
+                            if (ls.equals("on"))
+                                ledState = true;
+                            else
+                                ledState = false;
                             togBtn.setChecked(ledState);
                             txt4.setText(newTemp);
                         }
@@ -88,6 +85,7 @@ public class activity1 extends Activity {
             txt4 = (TextView) findViewById(R.id.textView5);
             togBtn = (ToggleButton) findViewById(R.id.toggleButton);
             btnMainMenu = (Button) findViewById(R.id.btnMainMenu);
+            showDataBtn = (Button) findViewById(R.id.showDataBtn);
             cc = new ConnectClient("Updating",SERVER_ADDRESS,SERVER_PORT,getApplicationContext());
             cc.execute();
             upTemp.start();
@@ -104,27 +102,29 @@ public class activity1 extends Activity {
     }
     public void showData(View v)
     {
-        PopupWindow popWindow = PopUp();
-
-        popWindow.showAtLocation(,Gravity.CENTER,200,200);
-        Log.d("Debug","Window"+popWindow.isShowing());
+        fragt = getFragmentManager().beginTransaction();
+        fvd = fragmentViewData.newInstance();
+        fragt.replace(R.id.ControlRoom,fvd);
+        fragt.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+        fragt.addToBackStack(null);
+        fragt.commit();
     }
     public void changeLedState(View v)
     {
-        ledState = !ledState;
+        if(ls.equals("on"))
+            ls = "off";
+        else
+            ls ="on";
     }
-    public static boolean getState(){
-        return ledState;
+    public static String getState() {
+        return ls;
     }
-    public PopupWindow PopUp(){
-        PopupWindow PopupWindow = new PopupWindow(this);
-        ArrayList<String> data = dbh.returnData();
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_dropdown_item_1line,data);
-        ListView listViewData = new ListView(this);
-        listViewData.setAdapter(dataAdapter);
-        PopupWindow.setFocusable(true);
-        PopupWindow.setWidth(250);
-        PopupWindow.setContentView(listViewData);
-        return PopupWindow;
+    public static void setData(String ls2,String t){
+        if (ls2.equals("on"))
+            ls = "on";
+        else
+            ls = "off";
+        newTemp = t;
+
     }
 }

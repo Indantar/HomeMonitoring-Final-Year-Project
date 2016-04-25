@@ -98,8 +98,6 @@ public class DatabaseHelper  extends SQLiteOpenHelper
         String createTable = "CREATE TABLE IF NOT EXISTS " + tblNameData + "(" + tblID2 + " INTEGER PRIMARY KEY AUTOINCREMENT,"+
                 tblTemp + " TEXT," + tblLed + " TEXT," + tblTime + " DATETIME DEFAULT CURRENT_TIMESTAMP);";
         db.execSQL(createTable);
-//        String insertValues = "INSERT INTO " + tblNameData + "(" + tblTemp + "," + tblLed + "," + tblTime +") VALUES ("+ temp + ", " + ls + ", DATETIME('now'));";
-//        db.execSQL(insertValues);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = new Date();
         ContentValues putDate = new ContentValues();
@@ -117,14 +115,20 @@ public class DatabaseHelper  extends SQLiteOpenHelper
         Cursor cur = db.rawQuery(query, null);
         if(cur.moveToFirst())
         {
+            StringBuilder sb = new StringBuilder();
+            sb.append("ID\t\t");
+            sb.append("Temp\t\t");
+            sb.append("Led\t\t");
+            sb.append("Time\t\t\t");
+            returnData.add(sb.toString());
             do
             {
-                StringBuilder sb = new StringBuilder();
-                sb.append(cur.getString(0) + "\t");
-                sb.append(cur.getString(1) + "\t");
-                sb.append(cur.getString(2) + "\t");
-                sb.append(cur.getString(3) + "\t");
-                returnData.add(sb.toString());
+                StringBuilder sbs = new StringBuilder();
+                sbs.append(cur.getString(0) + "\t\t\t\t\t");
+                sbs.append(cur.getString(1) + "\t\t\t\t\t");
+                sbs.append(cur.getString(2) + "\t\t\t");
+                sbs.append(cur.getString(3) + "\t\t");
+                returnData.add(sbs.toString());
             }
             while(cur.moveToNext());
         }

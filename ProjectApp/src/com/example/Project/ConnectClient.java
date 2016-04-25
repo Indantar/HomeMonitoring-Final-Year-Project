@@ -24,10 +24,10 @@ public class ConnectClient extends AsyncTask<String, Void, String> {
     private Integer PORT;
     private String IP;
 
-    private static InputStreamReader inputStreamReader;
     private static BufferedReader bufferedReader;
     private static String message;
     private static String sendMessage;
+    public String[] data;
 
     public ConnectClient(String par, String ip, Integer prt, Context ctx){
         super();
@@ -62,11 +62,9 @@ public class ConnectClient extends AsyncTask<String, Void, String> {
                 Log.d("Debug","Message Received" + message);
                 if(!message.equals("stop"))
                 {
-                    boolean LEDSTATE = activity1.getState();
-                    if(LEDSTATE == true)
-                        sendMessage = "on";
-                    else
-                        sendMessage = "off";
+                    data = message.split(":");
+                    activity1.setData(data[1],data[0]);
+                    sendMessage = activity1.getState();
                     printWriter.write(sendMessage+"\n");
                     printWriter.flush();
                     Log.d("Debug","Sending Message:" + sendMessage);
@@ -96,9 +94,6 @@ public class ConnectClient extends AsyncTask<String, Void, String> {
         Toast.makeText(context, "In progress", Toast.LENGTH_SHORT).show();
     }
 
-    public String getMessage(){
-        return message;
-    }
     public void stop()
     {
         try

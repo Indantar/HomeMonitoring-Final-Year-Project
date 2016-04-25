@@ -1,5 +1,6 @@
 #include "mbed.h"
 #include "EthernetInterface.h"
+#include "motordriver.h"
 
 #define ECHO_SERVER_PORT  80
 
@@ -7,6 +8,7 @@
 AnalogIn T1(PTB2); //  temperature  sensor T1 on A0
 DigitalIn pb(SW2);
 DigitalOut led(LED2);
+Motor m(D7,D6,D5,1);
 float T; // average temperature
 float stepSize = 3.3/4096;
 bool ledState;
@@ -23,7 +25,6 @@ void checkThread(void const *args)
 	{
 		while(pb){}
 		ledState = !ledState;
-		Thread::wait(TIME_OUT/5);
 	}
 }
 void controlLed(void const *args)
@@ -32,6 +33,13 @@ void controlLed(void const *args)
 	{
 		led = !ledState;
 		Thread::wait(TIME_OUT);
+	}
+}
+void fanControl(void const *args)
+{
+	while(true){
+		m.speed(1.0);
+		wait(0.02);
 	}
 }
 void connectionThread(void const *args)
@@ -87,16 +95,25 @@ void connectionThread(void const *args)
 }
 int main (void)
 {
+
     eth.init(); //Use DHCP
     eth.connect();
 	server.bind(ECHO_SERVER_PORT);
 	server.listen();
-	printf("\nWaiting for Client at %s\r\n", eth.getIPAddress());
-	server.accept(socket);
-	pc.printf("Client at %s connected\r\n",socket.get_address());
-	Thread sockThread(connectionThread);
-	Thread ledThread(checkThread);
-	Thread conThread(controlLed);
-    while(true){}
-
+	while(true)
+	{
+		printf("\nWaiting for Client at %s\r\n", eth.getIPAddress());
+		server.accept(socket);
+		pc.printf("Client at %s connected\r\n",socket.get_address());
+		Thread sockThread(connectionThread);
+		Thread ledThread(checkThread);
+		Thread conThread(controlLed);
+		Thread fanThread(fanControl);
+		while(socket.is_connected())
+		{}
+		sockThread.terminate();
+		ledThread.terminate();
+		conThread.terminate();
+		fanThread.terminate();
+	}
 }

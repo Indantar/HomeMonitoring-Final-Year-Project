@@ -5,11 +5,7 @@
 		<item value="true" key="WizardProjectsImportPage.STORE_COPY_PROJECT_ID"/>
 		<item value="false" key="WizardProjectsImportPage.STORE_NESTED_PROJECTS"/>
 		<list key="WizardProjectsImportPage.STORE_DIRECTORIES">
-			<item value="C:\Users\Dawid\Downloads\DebounceIn_kds_k64f\DebounceIn"/>
-			<item value="C:\Users\Dawid\Downloads\TCPEchoClient_kds_k64f"/>
-			<item value="C:\Users\Dawid\Downloads\TemperatureSensorLM35_kds_k64f"/>
-			<item value="C:\Users\Dawid\Desktop\College\Project\Mbed\mbed\build\export\MBED_A9_kds_K64F"/>
-			<item value="C:\Users\Dawid\Desktop\College\Project\Mbed\mbed\build\export\MBED_A5_kds_K64F"/>
+			<item value="\\Gwengstud\stud\G00284823\Documents\downloads\HomeMonitoringSystem"/>
 		</list>
 		<list key="WizardProjectsImportPage.STORE_ARCHIVES">
 			<item value=""/>

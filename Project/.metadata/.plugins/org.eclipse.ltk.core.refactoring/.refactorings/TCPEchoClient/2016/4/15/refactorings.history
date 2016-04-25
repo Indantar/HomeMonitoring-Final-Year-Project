@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Rename resource &apos;TCPEchoClient/TCPSocket_HelloWorld&apos; to &apos;TCPSocket_HelloWorld.cpp&apos;" description="Rename resource &apos;TCPSocket_HelloWorld&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="TCPSocket_HelloWorld" name="TCPSocket_HelloWorld.cpp" stamp="1460464802127" updateReferences="true"/>
-</session>

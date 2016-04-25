@@ -1,1 +1,0 @@
-TMP35/LM35 Temperature Sensor
