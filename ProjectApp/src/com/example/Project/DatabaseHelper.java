@@ -21,15 +21,16 @@ public class DatabaseHelper  extends SQLiteOpenHelper
     public static final String tblNameData = "Data";
 
     private static final String dbName 					= "LoginDetails";
-    private static final int    dbVersion 				= 13;
+    private static final int    dbVersion 				= 14;
 
     private static final String tblID 				= "tblID";
     private static final String tblID2 				= "tblID2";
     private static final String tblUserName			= "UserName";
     private static final String tblPass				= "Password";
     private static final String tblTemp             = "Temperature";
-    private static final String tblLed             = "Led";
+    private static final String tblLed              = "Led";
     private static final String tblTime             = "Time";
+    private static final String tblFanSpeed         = "FanSpeed";
 
 
     private static DatabaseHelper inst;
@@ -93,16 +94,21 @@ public class DatabaseHelper  extends SQLiteOpenHelper
         }
         return 0;
     }
-    public void enterData(String ls,String temp){
+    public void enterData(String ls,String temp,String fs){
         SQLiteDatabase db = this.getWritableDatabase();
-        String createTable = "CREATE TABLE IF NOT EXISTS " + tblNameData + "(" + tblID2 + " INTEGER PRIMARY KEY AUTOINCREMENT,"+
-                tblTemp + " TEXT," + tblLed + " TEXT," + tblTime + " DATETIME DEFAULT CURRENT_TIMESTAMP);";
+        String createTable = "CREATE TABLE IF NOT EXISTS " + tblNameData + "(" +
+                tblID2 + " INTEGER PRIMARY KEY AUTOINCREMENT,"+
+                tblTemp + " TEXT," +
+                tblLed + " TEXT," +
+                tblFanSpeed + " TEXT," +
+                tblTime + " DATETIME DEFAULT CURRENT_TIMESTAMP);";
         db.execSQL(createTable);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = new Date();
         ContentValues putDate = new ContentValues();
         putDate.put(tblTemp, temp);
         putDate.put(tblLed, ls);
+        putDate.put(tblFanSpeed, fs);
         putDate.put(tblTime, sdf.format(date));
         db.insert(tblNameData,null,putDate);
     }
@@ -116,19 +122,35 @@ public class DatabaseHelper  extends SQLiteOpenHelper
         if(cur.moveToFirst())
         {
             StringBuilder sb = new StringBuilder();
-            sb.append("ID\t\t");
             sb.append("Temp\t\t");
             sb.append("Led\t\t");
+            sb.append("Fan Speed\t\t");
             sb.append("Time\t\t\t");
             returnData.add(sb.toString());
             do
             {
                 StringBuilder sbs = new StringBuilder();
-                sbs.append(cur.getString(0) + "\t\t\t\t\t");
                 sbs.append(cur.getString(1) + "\t\t\t\t\t");
                 sbs.append(cur.getString(2) + "\t\t\t");
-                sbs.append(cur.getString(3) + "\t\t");
+                sbs.append(cur.getString(3) + "\t\t\t");
+                sbs.append(cur.getString(4) + "\t\t");
                 returnData.add(sbs.toString());
+            }
+            while(cur.moveToNext());
+        }
+        return returnData;
+    }
+    public ArrayList<Double> returnTemp()
+    {
+        ArrayList<Double> returnData = new ArrayList<Double>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT " +tblTemp+ " FROM Data;";
+        Cursor cur = db.rawQuery(query, null);
+        if(cur.moveToFirst())
+        {
+            do
+            {
+                returnData.add(cur.getDouble(0));
             }
             while(cur.moveToNext());
         }

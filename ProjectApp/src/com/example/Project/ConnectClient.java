@@ -64,7 +64,7 @@ public class ConnectClient extends AsyncTask<String, Void, String> {
                 {
                     data = message.split(":");
                     activity1.setData(data[1],data[0]);
-                    sendMessage = activity1.getState();
+                    sendMessage = activity1.getState() + ":" + activity1.getFanSpeed();
                     printWriter.write(sendMessage+"\n");
                     printWriter.flush();
                     Log.d("Debug","Sending Message:" + sendMessage);

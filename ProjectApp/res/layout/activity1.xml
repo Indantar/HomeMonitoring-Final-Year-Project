@@ -39,14 +39,40 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Log Out"
-            android:id="@+id/btnMainMenu" android:layout_alignParentBottom="true" android:layout_alignParentStart="true"
+            android:id="@+id/btnMainMenu"
             android:width="170dp" android:textSize="25dp"
             android:onClick="goToMain"
-            android:background="#a100fff6"/>
+            android:background="#a100fff6"
+            android:layout_above="@+id/showDataBtn" android:layout_centerHorizontal="true"/>
     <Button style="?android:attr/buttonStyleSmall" android:layout_width="wrap_content"
             android:layout_height="wrap_content" android:text="Show Data" android:id="@+id/showDataBtn"
             android:width="170dp"
             android:textSize="25dp" android:onClick="showData" android:background="#a100fff6"
-            android:layout_alignParentBottom="true" android:layout_alignStart="@+id/toggleButton"
-            android:enabled="true" android:clickable="true"/>
+            android:enabled="true" android:clickable="true"
+            android:layout_alignBaseline="@+id/showGraphBtn" android:layout_alignBottom="@+id/showGraphBtn"
+            android:layout_alignParentStart="true"/>
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Fan"
+              android:id="@+id/textViewFan"
+              android:width="145dp" android:textSize="30dp"
+              android:textColor="#76fa00" android:layout_centerVertical="true" android:layout_alignParentStart="true"
+              android:layout_marginTop="50dp"/>
+    <SeekBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/seekBar" android:layout_alignBottom="@+id/textViewFan"
+            android:layout_alignParentEnd="true" android:layout_alignTop="@+id/textViewFan"
+            android:layout_alignStart="@+id/toggleButton" android:indeterminate="false"
+            android:background="#a100fff6" android:clickable="true" android:longClickable="false"/>
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Speed"
+              android:id="@+id/textViewSp" android:width="145dp" android:textSize="30dp" android:textColor="#76fa00"
+              android:layout_below="@+id/textViewFan" android:layout_alignParentStart="true"/>
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+              android:id="@+id/textViewSpeed" android:width="145dp" android:textSize="30dp" android:textColor="#76fa00"
+              android:layout_alignTop="@+id/textViewSp" android:layout_alignParentEnd="true"
+              android:layout_alignStart="@+id/seekBar"/>
+    <Button style="?android:attr/buttonStyleSmall" android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:text="Show Graph" android:id="@+id/showGraphBtn"
+            android:width="170dp" android:textSize="25dp" android:onClick="showGraph" android:background="#a100fff6"
+            android:enabled="true" android:clickable="true"
+            android:layout_alignParentBottom="true" android:layout_alignParentEnd="true"/>
 </RelativeLayout>

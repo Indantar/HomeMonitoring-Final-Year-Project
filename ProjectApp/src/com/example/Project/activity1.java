@@ -24,11 +24,14 @@ import java.util.Random;
 public class activity1 extends Activity {
 
     private ToggleButton togBtn;
+    private SeekBar fan;
     private Button showDataBtn;
     private Button btnMainMenu;
     private TextView txt2;
     private TextView txt3;
     private TextView txt4;
+    private TextView txtSp;
+    private static TextView txtSpeed;
     private String SERVER_ADDRESS = "192.168.0.3";
     private FragmentTransaction fragt;
     private int SERVER_PORT = 80;
@@ -37,6 +40,7 @@ public class activity1 extends Activity {
     public static String ls = "off";
     public static final int TIME_OUT = 5000;
     private fragmentViewData fvd;
+    private fragmentViewGraph fvg;
     ConnectClient cc;
     DatabaseHelper dbh = new DatabaseHelper(this);
 
@@ -55,7 +59,7 @@ public class activity1 extends Activity {
                         @Override
                         public void run()
                         {
-                            dbh.enterData(ls,newTemp);
+                            dbh.enterData(ls,newTemp,getFanSpeed());
                             Log.d("Debug",ls+","+newTemp);
                             if (ls.equals("on"))
                                 ledState = true;
@@ -80,12 +84,29 @@ public class activity1 extends Activity {
         try
         {
             setContentView(R.layout.activity1);
+            txtSp = (TextView) findViewById(R.id.textViewSp);
+            txtSpeed = (TextView) findViewById(R.id.textViewSpeed);
             txt2 = (TextView) findViewById(R.id.textView3);
             txt3 = (TextView) findViewById(R.id.textView4);
             txt4 = (TextView) findViewById(R.id.textView5);
             togBtn = (ToggleButton) findViewById(R.id.toggleButton);
             btnMainMenu = (Button) findViewById(R.id.btnMainMenu);
             showDataBtn = (Button) findViewById(R.id.showDataBtn);
+            fan = (SeekBar) findViewById(R.id.seekBar);
+            fan.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
+            {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress,boolean bl){
+                    double speed = ((double)progress / 100.0);
+                    txtSpeed.setText(String.valueOf(speed));
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {}
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {}
+            });
             cc = new ConnectClient("Updating",SERVER_ADDRESS,SERVER_PORT,getApplicationContext());
             cc.execute();
             upTemp.start();
@@ -109,12 +130,24 @@ public class activity1 extends Activity {
         fragt.addToBackStack(null);
         fragt.commit();
     }
+    public void showGraph(View v)
+    {
+        fragt = getFragmentManager().beginTransaction();
+        fvg = fragmentViewGraph.newInstance();
+        fragt.replace(R.id.ControlRoom,fvg);
+        fragt.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+        fragt.addToBackStack(null);
+        fragt.commit();
+    }
     public void changeLedState(View v)
     {
         if(ls.equals("on"))
             ls = "off";
         else
             ls ="on";
+    }
+    public static String getFanSpeed(){
+        return txtSpeed.getText().toString();
     }
     public static String getState() {
         return ls;

@@ -8,9 +8,10 @@
 AnalogIn T1(PTB2); //  temperature  sensor T1 on A0
 DigitalIn pb(SW2);
 DigitalOut led(LED2);
-Motor m(D7,D6,D5,1);
+Motor m(D7,D6,D5,0);
 float T; // average temperature
 float stepSize = 3.3/4096;
+float speed = 0.0;
 bool ledState;
 const int TIME_OUT = 5000;
 
@@ -37,8 +38,9 @@ void controlLed(void const *args)
 }
 void fanControl(void const *args)
 {
-	while(true){
-		m.speed(1.0);
+	while(true)
+	{
+		m.speed(speed);
 		wait(0.02);
 	}
 }
@@ -48,8 +50,13 @@ void connectionThread(void const *args)
 	char state[10] = {0};
     char message[10] = {0};
 	char buf[256] = {0};
+	const char delim[2] = ":";
+	char *ls;
+	char *sp;
+	char *tok;
     while(socket.is_connected())
     {
+    	char cnt = 0;
     	memset(&message[0], 0, sizeof(message));
     	memset(&state[0], 0, sizeof(state));
     	memset(&temp[0], 0, sizeof(temp));
@@ -82,10 +89,21 @@ void connectionThread(void const *args)
 				pc.printf("Bytes received = %d\r\n",n);
 				buf[n] = '\0';
 				pc.printf("Received message from Client: '%s'\r\n", buf);
-				if(!strcmp(buf,"on"))
+				tok = strtok(buf, delim);
+				while( tok != NULL )
+				{
+					if(cnt == 0)
+						ls = tok;
+					else
+						sp = tok;
+					tok = strtok(NULL, delim);
+					cnt++;
+				}
+				if(!strcmp(ls,"on"))
 					ledState = true;
-				else
+				else if(!strcmp(ls,"off"))
 					ledState = false;
+				speed = (float)atof(sp);
 			}
 		}
 		Thread::wait(TIME_OUT);
@@ -96,7 +114,7 @@ void connectionThread(void const *args)
 int main (void)
 {
 
-    eth.init(); //Use DHCP
+     eth.init(); //Use DHCP
     eth.connect();
 	server.bind(ECHO_SERVER_PORT);
 	server.listen();
@@ -115,5 +133,6 @@ int main (void)
 		ledThread.terminate();
 		conThread.terminate();
 		fanThread.terminate();
+		m.stop(0);
 	}
 }
